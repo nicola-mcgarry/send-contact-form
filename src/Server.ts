@@ -8,8 +8,7 @@ dotenv.config();
 
 const app = express();
 
-// Allowed origins
-const allowedOrigins = ['https://nicolamcgarry.net', 'https://your-netlify-app-url.netlify.app', 'http://localhost:5000'];
+const allowedOrigins = ['https://nicolamcgarry.net', 'https://your-netlify-app-url.netlify.app'];
 
 const corsOptions: CorsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
@@ -25,17 +24,23 @@ const corsOptions: CorsOptions = {
   optionsSuccessStatus: 204,
 };
 
-// Apply CORS middleware
 app.use(cors(corsOptions));
 
-// Handle preflight requests
 app.options('*', cors(corsOptions));
 
-// Parse request body
 app.use(bodyParser.json());
+
+app.use((req: Request, res: Response, next: Function) => {
+  console.log(`Received ${req.method} request for ${req.url}`);
+  console.log('Request headers:', req.headers);
+  console.log('Request body:', req.body);
+  next();
+});
 
 app.post('/send-contact-form', (req: Request, res: Response) => {
   const { name, email, message } = req.body;
+
+  console.log('Processing contact form submission:', { name, email, message });
 
   const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -62,7 +67,7 @@ app.post('/send-contact-form', (req: Request, res: Response) => {
 });
 
 app.use((err: any, req: Request, res: Response, next: Function) => {
-  console.error(err.stack);
+  console.error('Error:', err.stack);
   res.status(500).send('Something broke!');
 });
 
