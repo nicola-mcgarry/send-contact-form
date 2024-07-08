@@ -61,6 +61,11 @@ app.post('/send-contact-form', (req: Request, res: Response) => {
   });
 });
 
+app.use((err: any, req: Request, res: Response, next: Function) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
