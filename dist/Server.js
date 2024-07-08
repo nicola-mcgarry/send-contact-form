@@ -5,8 +5,8 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 dotenv.config();
 const app = express();
-// Comprehensive CORS configuration
-const allowedOrigins = ['https://nicolamcgarry.net', 'https://your-netlify-app-url.netlify.app'];
+// Allowed origins
+const allowedOrigins = ['https://nicolamcgarry.net', 'https://your-netlify-app-url.netlify.app', 'http://localhost:5000'];
 const corsOptions = {
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
@@ -16,12 +16,16 @@ const corsOptions = {
             callback(new Error('Not allowed by CORS'));
         }
     },
-    optionsSuccessStatus: 200,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     preflightContinue: false,
-    allowedHeaders: 'Content-Type,Authorization'
+    optionsSuccessStatus: 204,
 };
+// Apply CORS middleware
 app.use(cors(corsOptions));
+// Handle preflight requests
+app.options('*', cors(corsOptions));
+// Parse request body
 app.use(bodyParser.json());
 app.post('/send-contact-form', (req, res) => {
     const { name, email, message } = req.body;
@@ -45,6 +49,10 @@ app.post('/send-contact-form', (req, res) => {
         }
         res.status(200).send('Email sent: ' + info.response);
     });
+});
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
 });
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 
 // Allowed origins
-const allowedOrigins = ['https://nicolamcgarry.net', 'https://your-netlify-app-url.netlify.app'];
+const allowedOrigins = ['https://nicolamcgarry.net', 'https://your-netlify-app-url.netlify.app', 'http://localhost:5000'];
 
 const corsOptions: CorsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
@@ -66,7 +66,7 @@ app.use((err: any, req: Request, res: Response, next: Function) => {
   res.status(500).send('Something broke!');
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
