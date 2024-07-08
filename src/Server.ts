@@ -2,16 +2,16 @@ import dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
 import nodemailer from 'nodemailer';
 import bodyParser from 'body-parser';
-import cors from 'cors';
+import cors, { CorsOptions } from 'cors';
 
 dotenv.config();
 
 const app = express();
 
-// Comprehensive CORS configuration
+// Allowed origins
 const allowedOrigins = ['https://nicolamcgarry.net', 'https://your-netlify-app-url.netlify.app'];
 
-const corsOptions = {
+const corsOptions: CorsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -21,13 +21,18 @@ const corsOptions = {
   },
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  preflightContinue: false,
   optionsSuccessStatus: 204,
 };
 
+// Apply CORS middleware
 app.use(cors(corsOptions));
-app.use(bodyParser.json());
 
-app.options('*', cors(corsOptions)); // Preflight requests
+// Handle preflight requests
+app.options('*', cors(corsOptions));
+
+// Parse request body
+app.use(bodyParser.json());
 
 app.post('/send-contact-form', (req: Request, res: Response) => {
   const { name, email, message } = req.body;
