@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import nodemailer from 'nodemailer';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -42,7 +42,7 @@ app.options('*', (req, res) => {
 app.use(bodyParser.json());
 
 // Log all incoming requests
-app.use((req: Request, res: Response, next: Function) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   console.log(`Received ${req.method} request for ${req.url}`);
   console.log('Request headers:', req.headers);
   console.log('Request body:', req.body);
@@ -78,7 +78,7 @@ app.post('/send-contact-form', (req: Request, res: Response) => {
   });
 });
 
-app.use((err: any, req: Request, res: Response, next: Function) => {
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error('Error:', err.stack);
   res.status(500).send('Something broke!');
 });
