@@ -8,10 +8,11 @@ dotenv.config();
 
 const app = express();
 
+// Allowed origins including localhost for local testing
 const allowedOrigins = [
   'https://nicolamcgarry.net', 
   'https://your-netlify-app-url.netlify.app',
-  'http://localhost:5000'
+  'http://localhost:3000'
 ];
 
 const corsOptions: CorsOptions = {
@@ -24,16 +25,20 @@ const corsOptions: CorsOptions = {
   },
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  preflightContinue: false,
+  credentials: true, // Include credentials in CORS requests
   optionsSuccessStatus: 204,
 };
 
+// Apply CORS middleware
 app.use(cors(corsOptions));
 
+// Handle preflight requests
 app.options('*', cors(corsOptions));
 
+// Parse request body
 app.use(bodyParser.json());
 
+// Log all incoming requests
 app.use((req: Request, res: Response, next: Function) => {
   console.log(`Received ${req.method} request for ${req.url}`);
   console.log('Request headers:', req.headers);
@@ -75,7 +80,8 @@ app.use((err: any, req: Request, res: Response, next: Function) => {
   res.status(500).send('Something broke!');
 });
 
-const PORT = process.env.PORT || 5000; // Use environment variable for port
+// Set the port to 5000
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
