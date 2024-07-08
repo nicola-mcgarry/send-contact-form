@@ -5,9 +5,21 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 dotenv.config();
 const app = express();
+// Comprehensive CORS configuration
+const allowedOrigins = ['https://nicolamcgarry.net', 'https://your-netlify-app-url.netlify.app'];
 const corsOptions = {
-    origin: 'https://your-netlify-app-url.netlify.app',
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        }
+        else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     optionsSuccessStatus: 200,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    allowedHeaders: 'Content-Type,Authorization'
 };
 app.use(cors(corsOptions));
 app.use(bodyParser.json());

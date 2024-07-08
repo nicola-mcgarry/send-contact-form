@@ -1,22 +1,34 @@
 import dotenv from 'dotenv';
-import express from 'express';
+import express, { Request, Response } from 'express';
 import nodemailer from 'nodemailer';
 import bodyParser from 'body-parser';
-import cors from 'cors';
+import cors, { CorsOptions } from 'cors';
 
 dotenv.config();
 
 const app = express();
 
-const corsOptions = {
-  origin: 'https://nicolamcgarry.net', 
+// Comprehensive CORS configuration
+const allowedOrigins = ['https://nicolamcgarry.net', 'https://your-netlify-app-url.netlify.app'];
+
+const corsOptions: CorsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   optionsSuccessStatus: 200,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  preflightContinue: false,
+  allowedHeaders: 'Content-Type,Authorization'
 };
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
-app.post('/send-contact-form', (req, res) => {
+app.post('/send-contact-form', (req: Request, res: Response) => {
   const { name, email, message } = req.body;
 
   const transporter = nodemailer.createTransport({
