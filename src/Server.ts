@@ -7,8 +7,14 @@ import cors from 'cors';
 dotenv.config();
 
 const app = express();
+
+const corsOptions = {
+  origin: 'https://your-netlify-app-url.netlify.app', 
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
-app.use(cors());
 
 app.post('/send-contact-form', (req, res) => {
   const { name, email, message } = req.body;
