@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 
 const corsOptions = {
-  origin: 'https://your-netlify-app-url.netlify.app', 
+  origin: 'https://nicolamcgarry.net', 
   optionsSuccessStatus: 200,
 };
 
